@@ -14,7 +14,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
     public User createUser(UserCreationRequest request){
-        User user = new User();
+
+          User user = new User();
+        if(userRepository.existsByUsername(request.getUsername()))
+            throw new RuntimeException("User Existed");
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
         user.setFirstname(request.getFirstname());

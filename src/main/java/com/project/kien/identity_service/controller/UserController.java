@@ -4,6 +4,7 @@ import com.project.kien.identity_service.Service.UserService;
 import com.project.kien.identity_service.dto.request.UserCreationRequest;
 import com.project.kien.identity_service.dto.request.UserUpdateRequest;
 import com.project.kien.identity_service.entity.User;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,11 +15,11 @@ import java.util.List;
 public class UserController {
 @Autowired
     UserService userService;
-@PostMapping
-User createUser(@RequestBody UserCreationRequest request) {
+    @PostMapping
+    User createUser(@RequestBody @Valid UserCreationRequest request) {
     return userService.createUser(request);
 }
-@GetMapping
+    @GetMapping
     List<User> getUsers(){
     return userService.getUsers();
     }

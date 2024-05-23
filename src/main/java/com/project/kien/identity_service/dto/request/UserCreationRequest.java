@@ -1,10 +1,13 @@
 package com.project.kien.identity_service.dto.request;
 
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 
 
 public class UserCreationRequest {
     private String username;
+    @Size(min = 4,message = "Username must be at least 4 cheracter")
     private String password;
     private String firstname;
     private String lastname;
