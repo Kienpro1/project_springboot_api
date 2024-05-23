@@ -3,6 +3,8 @@ package com.project.kien.identity_service.Service;
 import com.project.kien.identity_service.dto.request.UserCreationRequest;
 import com.project.kien.identity_service.dto.request.UserUpdateRequest;
 import com.project.kien.identity_service.entity.User;
+import com.project.kien.identity_service.exception.AppException;
+import com.project.kien.identity_service.exception.ErrorCode;
 import com.project.kien.identity_service.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,7 @@ public class UserService {
 
           User user = new User();
         if(userRepository.existsByUsername(request.getUsername()))
-            throw new RuntimeException("User Existed");
+            throw new AppException(ErrorCode.USER_EXISTED);
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
         user.setFirstname(request.getFirstname());

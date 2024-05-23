@@ -6,8 +6,9 @@ import java.time.LocalDate;
 
 
 public class UserCreationRequest {
+    @Size(min = 4, message = "USERNAME_VALID")
     private String username;
-    @Size(min = 4,message = "Username must be at least 4 cheracter")
+    @Size(min = 4, message = "PASSWORD_VALID")
     private String password;
     private String firstname;
     private String lastname;
