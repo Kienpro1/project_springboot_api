@@ -4,6 +4,7 @@ import com.project.kien.identity_service.Service.UserService;
 import com.project.kien.identity_service.dto.request.ApiResponse;
 import com.project.kien.identity_service.dto.request.UserCreationRequest;
 import com.project.kien.identity_service.dto.request.UserUpdateRequest;
+import com.project.kien.identity_service.dto.response.UserResponse;
 import com.project.kien.identity_service.entity.User;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,13 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @GetMapping("/{userId}")
-    User getUser(@PathVariable("userId") String userId) {
-        return userService.getUser(userId);
+    @GetMapping("/{username}")
+    UserResponse getUser(@PathVariable("username") String username) {
+        return userService.getUser(username);
     }
 
     @PutMapping("/{userId}")
-    User updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
+    UserResponse updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
         return userService.updateUser(userId, request);
     }
 

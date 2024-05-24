@@ -2,48 +2,59 @@ package com.project.kien.identity_service.Service;
 
 import com.project.kien.identity_service.dto.request.UserCreationRequest;
 import com.project.kien.identity_service.dto.request.UserUpdateRequest;
+import com.project.kien.identity_service.dto.response.UserResponse;
 import com.project.kien.identity_service.entity.User;
 import com.project.kien.identity_service.exception.AppException;
 import com.project.kien.identity_service.exception.ErrorCode;
+import com.project.kien.identity_service.mapper.UserMapper;
 import com.project.kien.identity_service.repository.UserRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-    public User createUser(UserCreationRequest request){
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 
-          User user = new User();
-        if(userRepository.existsByUsername(request.getUsername()))
+public class UserService {
+    UserRepository userRepository;
+    UserMapper userMapper;
+
+    public User createUser(UserCreationRequest request) {
+
+
+        if (request.getDob().getYear() > 2024)
+            throw new AppException(ErrorCode.INVALID_YEAR);
+
+        if (userRepository.existsByUsername(request.getUsername()))
             throw new AppException(ErrorCode.USER_EXISTED);
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        user.setFirstname(request.getFirstname());
-        user.setLastname(request.getLastname());
-        user.setDob(request.getDob());
-       return userRepository.save(user);
+        User user = userMapper.toUser(request);
+        return userRepository.save(user);
 
 
     }
-    public List<User> getUsers(){
+
+    public List<User> getUsers() {
         return userRepository.findAll();
     }
-    public User getUser(String id){
-        return userRepository.findById(id).orElseThrow(()->new RuntimeException("user not found"));
+
+    public UserResponse getUser(String username) {
+        return userMapper.toUserResponse(userRepository.findUserByUsername(username)
+);
     }
-    public User updateUser(String id,UserUpdateRequest request){
-        User user = this.getUser(id);
-        user.setFirstname(request.getFirstname());
-        user.setLastname(request.getLastname());
-        user.setPassword(request.getPassword());
-        user.setDob(request.getDob());
-        return userRepository.save(user);
+
+    public UserResponse updateUser(String id, UserUpdateRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("user not found"));
+        userMapper.updateUser(user, request);
+        return userMapper.toUserResponse(userRepository.save(user));
     }
-    public void deleteUser(String id){
+
+    public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
 }
