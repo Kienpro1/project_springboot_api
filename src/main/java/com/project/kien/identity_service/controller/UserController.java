@@ -35,9 +35,10 @@ public class UserController {
         return userService.getUser(username);
     }
 
-    @PutMapping("/{userId}")
-    UserResponse updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
-        return userService.updateUser(userId, request);
+    @PutMapping("/{username}")
+    UserResponse updateUser(@PathVariable String username, @RequestBody UserUpdateRequest request) {
+
+        return userService.updateUser(username, request);
     }
 
     @DeleteMapping("{userId}")

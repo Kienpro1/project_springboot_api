@@ -43,13 +43,18 @@ public class UserService {
     }
 
     public UserResponse getUser(String username) {
-        return userMapper.toUserResponse(userRepository.findUserByUsername(username)
-);
+        if (!userRepository.existsByUsername(username))
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        else
+        return userMapper.toUserResponse(userRepository.findUserByUsername(username));
+
     }
 
-    public UserResponse updateUser(String id, UserUpdateRequest request) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("user not found"));
+    public UserResponse updateUser(String username, UserUpdateRequest request) {
+        User user = userRepository.findUserByUsername(username);
+        if (!userRepository.existsByUsername(username))
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        else
         userMapper.updateUser(user, request);
         return userMapper.toUserResponse(userRepository.save(user));
     }
