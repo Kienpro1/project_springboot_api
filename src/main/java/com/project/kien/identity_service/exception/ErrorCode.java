@@ -9,6 +9,7 @@ public enum ErrorCode {
     UNCATEGORIZED(9999,"uncategorized error"),
     USERNAME_VALID(1004,"Username must be at least 4 character"),
     PASSWORD_VALID(1006,"Password must be at least 4 character"),
+    UNAUTHENTICATED(1001,"unauthenticated")
 
     ;
     private int code;
