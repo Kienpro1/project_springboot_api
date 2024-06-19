@@ -56,10 +56,10 @@ ApiResponse<UserResponse> getMyInfo() {
                 .build();
     }
 
-    @PutMapping("/{username}")
-    UserResponse updateUser(@PathVariable String username, @RequestBody UserUpdateRequest request) {
+    @PutMapping("/{id}")
+    UserResponse updateUser(@PathVariable String id, @RequestBody UserUpdateRequest request) {
 
-        return userService.updateUser(username, request);
+        return userService.updateUser(id, request);
     }
 
     @DeleteMapping("{userId}")

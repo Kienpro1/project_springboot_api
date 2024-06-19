@@ -1,6 +1,6 @@
 package com.project.kien.identity_service.dto.response;
 
-import com.project.kien.identity_service.Enums.Role;
+import com.project.kien.identity_service.entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,12 +12,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse {
-     String id;
-     String username;
-     String firstname;
-     String lastname;
-     LocalDate dob;
-     Set<RoleResponse> roles;
+public class PermissionResponse {
+String name;
+String description;
+
 
 }
