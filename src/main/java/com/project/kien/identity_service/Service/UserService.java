@@ -1,14 +1,15 @@
 package com.project.kien.identity_service.Service;
 
 
-import com.project.kien.identity_service.Enums.Role;
 import com.project.kien.identity_service.dto.request.UserCreationRequest;
 import com.project.kien.identity_service.dto.request.UserUpdateRequest;
 import com.project.kien.identity_service.dto.response.UserResponse;
+import com.project.kien.identity_service.entity.Role;
 import com.project.kien.identity_service.entity.User;
 import com.project.kien.identity_service.exception.AppException;
 import com.project.kien.identity_service.exception.ErrorCode;
 import com.project.kien.identity_service.mapper.UserMapper;
+import com.project.kien.identity_service.repository.RoleRepository;
 import com.project.kien.identity_service.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder ;
+    RoleRepository roleRepository;
 
 
     public UserResponse createUser(UserCreationRequest request){
@@ -41,10 +43,10 @@ public class UserService {
             throw new AppException(ErrorCode.USER_EXISTED);
 
         User user = userMapper.toUser(request);
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-        user.setRoles(roles);
+        HashSet<Role> roles = new HashSet<>();
+        roleRepository.findById("USER").ifPresent(roles::add);
 
+        user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userMapper.toUserResponse(userRepository.save(user));
@@ -65,6 +67,7 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.findByUsername(username).orElseThrow(()->new AppException(ErrorCode.USER_NOT_FOUND)));
 
     }
+
 public UserResponse getMyInfo(){
 
      var context =SecurityContextHolder.getContext();
@@ -75,12 +78,13 @@ log.info("principal : {}",princi) ;
   User user = userRepository.findByUsername(name).orElseThrow(() ->new AppException(ErrorCode.USER_NOT_EXISTED));
   return userMapper.toUserResponse(user);
 }
-    public UserResponse updateUser(String username, UserUpdateRequest request) {
-        User user = userRepository.findByUsername(username).orElseThrow(()->new AppException(ErrorCode.USER_NOT_FOUND));
-        if (!userRepository.existsByUsername(username))
-            throw new AppException(ErrorCode.USER_NOT_EXISTED);
-        else
+    public UserResponse updateUser(String id, UserUpdateRequest request) {
+        User user = userRepository.findById(id).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED));
         userMapper.updateUser(user, request);
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
+
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
